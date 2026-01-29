@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ultranet-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    networks:
+      - ultranet-network
+    depends_on:
+      - db
+
+  # Nginx Service
+  nginx:
+    image: nginx:alpine
+    container_name: ultranet-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d
+    networks:
+      - ultranet-network
+    depends_on:
+      - app
+
+  # MySQL Service
+  db:
+    image: mysql:8.0
+    container_name: ultranet-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ultranet_product_management
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: password
+      MYSQL_USER: ultranet
+    ports:
+      - "3307:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - ultranet-network
+
+  # PhpMyAdmin Service
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: ultranet-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8080:80"
+    networks:
+      - ultranet-network
+    depends_on:
+      - db
+
+# Docker Networks
+networks:
+  ultranet-network:
+    driver: bridge
+
+# Volumes
+volumes:
+  dbdata:
+    driver: local
