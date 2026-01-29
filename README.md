@@ -565,7 +565,7 @@ This project is developed as part of the BestWeb Technologies Laravel Developer 
 
 For questions or support, please contact:
 
-- **Email**: admin@ultranet.com
+- **Email**: mafqqq16@gmail.com
 - **Repository**: https://github.com/afiqbaharuddin/ultranet-product-management
 
 ---
